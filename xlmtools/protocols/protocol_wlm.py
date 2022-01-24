@@ -27,6 +27,7 @@
 
 from os.path import abspath, join
 
+from pwem.convert.atom_struct import cifToPdb
 from pwem.objects import AtomStruct
 from pwem.protocols import ProtAnalysis3D
 
@@ -70,7 +71,12 @@ class ProtWLM(ProtAnalysis3D):
         for atomstruct in self.pdbs:
             ori_file = atomstruct.get().getFileName()
             dest_file = pwutils.removeBaseExt(ori_file) + '.pdb'
-            pwutils.createLink(ori_file, self._getExtraPath(dest_file))
+            print(pwutils.getExt(ori_file))
+            if pwutils.getExt(ori_file) == ".pdb":
+                pwutils.createLink(ori_file, self._getExtraPath(dest_file))
+            elif pwutils.getExt(ori_file) == ".cif":
+                print("CIF file detected. Converting it to PDB format...")
+                cifToPdb(ori_file, self._getExtraPath(dest_file))
             self.extra_files.append(dest_file)
 
     def computeControlStep(self):
